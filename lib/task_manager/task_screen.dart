@@ -7,9 +7,14 @@ import '../models/task.dart';
 
 class TaskScreen extends StatefulWidget {
   final Function(String, String, String) onAddTask;
+  final Function(int, Task) onEditTask;
   final List<Task> tasks;
 
-  TaskScreen({Key? key, required this.onAddTask, required this.tasks})
+  TaskScreen(
+      {Key? key,
+      required this.onAddTask,
+      required this.onEditTask,
+      required this.tasks})
       : super(key: key);
 
   @override
@@ -23,7 +28,7 @@ class _TaskScreenState extends State<TaskScreen> {
 
   int _editingIndex = -1;
 
-  void _addTask() {
+  void _prepareTask() {
     String newTask = _nameController.text;
     String newDateTime = _dateTimeController.text;
     String newLocation = _locationController.text;
@@ -49,37 +54,30 @@ class _TaskScreenState extends State<TaskScreen> {
       return;
     }
 
-    widget.onAddTask(newTask, newDateTime, newLocation);
+    if (_editingIndex != -1) {
+      widget.onEditTask(
+          _editingIndex,
+          Task(
+              name: _nameController.text,
+              dateTime: _dateTimeController.text,
+              location: _locationController.text));
+    } else {
+      widget.onAddTask(newTask, newDateTime, newLocation);
+    }
+
+    _nameController.clear();
+    _dateTimeController.clear();
+    _locationController.clear();
+    _editingIndex = -1;
   }
 
   void _editTask(int index) {
     Task task = widget.tasks[index];
-    _nameController.text = task.name;
-    _dateTimeController.text = task.dateTime;
-    _locationController.text = task.location;
-
-    if (task.name.isEmpty || task.dateTime.isEmpty || task.location.isEmpty) {
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: Text('Erro'),
-            content: Text('Por favor, preencha todos os campos obrigatórios.'),
-            actions: <Widget>[
-              TextButton(
-                child: Text('OK'),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-              ),
-            ],
-          );
-        },
-      );
-      return;
-    }
 
     setState(() {
+      _nameController.text = task.name;
+      _dateTimeController.text = task.dateTime;
+      _locationController.text = task.location;
       _editingIndex = index;
     });
   }
@@ -89,6 +87,9 @@ class _TaskScreenState extends State<TaskScreen> {
       widget.tasks.removeAt(index);
       if (_editingIndex == index) {
         _editingIndex = -1;
+        _nameController.clear();
+        _dateTimeController.clear();
+        _locationController.clear();
       }
     });
   }
@@ -179,22 +180,27 @@ class _TaskScreenState extends State<TaskScreen> {
               ),
             ),
             SizedBox(height: 16.0),
-            TextField(
-              controller: _locationController,
-              decoration: InputDecoration(
-                labelText: 'Local',
-              ),
+            Row(
+              children: [
+                Expanded(
+                    child: TextField(
+                  controller: _locationController,
+                  decoration: InputDecoration(
+                    labelText: 'Local',
+                  ),
+                )),
+                ElevatedButton(
+                  child: Text('Local Atual'),
+                  onPressed: _getCurrentLocation,
+                )
+              ],
             ),
             SizedBox(height: 16.0),
             ElevatedButton(
               child: Text(_editingIndex != -1
                   ? 'Atualizar Tarefa'
                   : 'Adicionar Tarefa'),
-              onPressed: _addTask,
-            ),
-            ElevatedButton(
-              child: Text('Local Atual'),
-              onPressed: _getCurrentLocation,
+              onPressed: _prepareTask,
             ),
             Expanded(
               child: ListView.builder(

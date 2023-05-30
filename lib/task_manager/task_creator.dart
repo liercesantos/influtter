@@ -3,8 +3,6 @@ import 'package:intl/intl.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:geocoding/geocoding.dart';
 
-import '../models/task.dart';
-
 class TaskCreationScreen extends StatefulWidget {
   final Function(String, String, String) onAddTask;
 
@@ -109,6 +107,10 @@ class _TaskCreationScreenState extends State<TaskCreationScreen> {
     }
 
     widget.onAddTask(newTask, newDateTime, newLocation);
+
+    _nameController.clear();
+    _dateTimeController.clear();
+    _locationController.clear();
   }
 
   @override

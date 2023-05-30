@@ -27,6 +27,12 @@ class _TaskAppState extends State<TaskApp> {
     });
   }
 
+  void _editTask(int index, Task task) {
+    setState(() {
+      mainTasks[index] = task;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -52,6 +58,7 @@ class _TaskAppState extends State<TaskApp> {
       return TaskScreen(
         key: Key('taskScreen'),
         onAddTask: _addTask,
+        onEditTask: _editTask,
         tasks: mainTasks,
       );
     } else {
