@@ -8,18 +8,23 @@ void main() {
   runApp(TaskApp());
 }
 
-// ignore: must_be_immutable
-class TaskApp extends StatelessWidget {
-  List<Task> mainTasks = [];
+class TaskApp extends StatefulWidget {
+  @override
+  _TaskAppState createState() => _TaskAppState();
+}
 
-  TaskApp({Key? key}) : super(key: key);
+// ignore: must_be_immutable
+class _TaskAppState extends State<TaskApp> {
+  List<Task> mainTasks = [];
 
   void _addTask(String newTask, String newDateTime, String newLocation) {
     String task = newTask;
     String datetime = newDateTime;
     String location = newLocation;
 
-    mainTasks.add(Task(name: task, dateTime: datetime, location: location));
+    setState(() {
+      mainTasks.add(Task(name: task, dateTime: datetime, location: location));
+    });
   }
 
   @override
