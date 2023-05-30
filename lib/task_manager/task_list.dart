@@ -1,32 +1,45 @@
 import 'package:flutter/material.dart';
 
+import '../models/task.dart';
+
 class TaskListScreen extends StatefulWidget {
   const TaskListScreen({Key? key}) : super(key: key);
 
   @override
-  // ignore: library_private_types_in_public_api
   _TaskListScreenState createState() => _TaskListScreenState();
 }
 
 class _TaskListScreenState extends State<TaskListScreen> {
-  final List<String> _tasks = [];
+  List<Task> _tasks = [];
+
+  void _deleteTask(int index) {
+    setState(() {
+      _tasks.removeAt(index);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Container(
       key: widget.key,
-      padding: const EdgeInsets.all(16.0),
+      padding: EdgeInsets.all(16.0),
       child: ListView.builder(
         itemCount: _tasks.length,
         itemBuilder: (context, index) {
+          Task task = _tasks[index];
           return ListTile(
-            title: Text(_tasks[index]),
+            title: Text(task.name),
+            subtitle: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('Date and Time: ${task.dateTime}'),
+                Text('Location: ${task.location}'),
+              ],
+            ),
             trailing: IconButton(
-              icon: const Icon(Icons.delete),
+              icon: Icon(Icons.delete),
               onPressed: () {
-                setState(() {
-                  _tasks.removeAt(index);
-                });
+                _deleteTask(index);
               },
             ),
           );
