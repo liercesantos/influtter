@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:geocoding/geocoding.dart';
 
 import '../models/task.dart';
 
@@ -45,6 +46,8 @@ class TaskCreationScreen extends StatelessWidget {
 
     Future<Position?> _getCurrentLocation() async {
       Position position;
+      String _location = 'N/E';
+
       try {
         LocationPermission permission = await Geolocator.requestPermission();
         if (permission == LocationPermission.denied) {
@@ -52,12 +55,23 @@ class TaskCreationScreen extends StatelessWidget {
         }
 
         position = await Geolocator.getCurrentPosition();
+
+        List<Placemark> placemarks = await placemarkFromCoordinates(
+          position.latitude,
+          position.longitude,
+        );
+
+        if (placemarks.isNotEmpty) {
+          print(placemarks);
+          _location =
+              '${placemarks[0].subAdministrativeArea}, ${placemarks[0].administrativeArea}';
+        }
       } catch (e) {
         print('Erro ao obter a localização: $e');
         return null;
       }
 
-      _locationController.text = '${position.latitude}, ${position.longitude}';
+      _locationController.text = _location;
 
       return position;
     }
@@ -85,7 +99,7 @@ class TaskCreationScreen extends StatelessWidget {
           TextField(
             controller: _nameController,
             decoration: InputDecoration(
-              labelText: 'Task',
+              labelText: 'Tarefa',
             ),
           ),
           SizedBox(height: 16.0),
@@ -96,23 +110,23 @@ class TaskCreationScreen extends StatelessWidget {
             },
             readOnly: true,
             decoration: InputDecoration(
-              labelText: 'Date and Time',
+              labelText: 'Data e Hora',
             ),
           ),
           SizedBox(height: 16.0),
           TextField(
             controller: _locationController,
             decoration: InputDecoration(
-              labelText: 'Location',
+              labelText: 'Local',
             ),
           ),
           SizedBox(height: 16.0),
           ElevatedButton(
-            child: Text('Add Task'),
+            child: Text('Adicionar Tarefa'),
             onPressed: _addTask,
           ),
           ElevatedButton(
-            child: Text('Get Current Location'),
+            child: Text('Local Atual'),
             onPressed: _getCurrentLocation,
           ),
         ],

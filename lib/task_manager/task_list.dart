@@ -32,8 +32,8 @@ class _TaskListScreenState extends State<TaskListScreen> {
             subtitle: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Date and Time: ${task.dateTime}'),
-                Text('Location: ${task.location}'),
+                Text('Data e Hora: ${task.dateTime}'),
+                Text('Local: ${task.location}'),
               ],
             ),
             trailing: IconButton(

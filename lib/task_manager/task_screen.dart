@@ -25,6 +25,27 @@ class _TaskScreenState extends State<TaskScreen> {
     String dateTime = _dateTimeController.text;
     String location = _locationController.text;
 
+    if (name.isEmpty || dateTime.isEmpty || location.isEmpty) {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('Erro'),
+            content: Text('Por favor, preencha todos os campos obrigatórios.'),
+            actions: <Widget>[
+              TextButton(
+                child: Text('OK'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        },
+      );
+      return;
+    }
+
     setState(() {
       if (_editingIndex != -1) {
         _tasks[_editingIndex] = Task(
@@ -54,6 +75,27 @@ class _TaskScreenState extends State<TaskScreen> {
     _nameController.text = task.name;
     _dateTimeController.text = task.dateTime;
     _locationController.text = task.location;
+
+    if (task.name.isEmpty || task.dateTime.isEmpty || task.location.isEmpty) {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('Erro'),
+            content: Text('Por favor, preencha todos os campos obrigatórios.'),
+            actions: <Widget>[
+              TextButton(
+                child: Text('OK'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        },
+      );
+      return;
+    }
 
     setState(() {
       _editingIndex = index;
@@ -141,7 +183,7 @@ class _TaskScreenState extends State<TaskScreen> {
             TextField(
               controller: _nameController,
               decoration: InputDecoration(
-                labelText: 'Task',
+                labelText: 'Tarefa',
               ),
             ),
             SizedBox(height: 16.0),
@@ -152,23 +194,25 @@ class _TaskScreenState extends State<TaskScreen> {
               },
               readOnly: true,
               decoration: InputDecoration(
-                labelText: 'Date and Time',
+                labelText: 'Data e Hora',
               ),
             ),
             SizedBox(height: 16.0),
             TextField(
               controller: _locationController,
               decoration: InputDecoration(
-                labelText: 'Location',
+                labelText: 'Local',
               ),
             ),
             SizedBox(height: 16.0),
             ElevatedButton(
-              child: Text(_editingIndex != -1 ? 'Update Task' : 'Add Task'),
+              child: Text(_editingIndex != -1
+                  ? 'Atualizar Tarefa'
+                  : 'Adicionar Tarefa'),
               onPressed: _addTask,
             ),
             ElevatedButton(
-              child: Text('Get Current Location'),
+              child: Text('Local Atual'),
               onPressed: _getCurrentLocation,
             ),
             Expanded(
@@ -181,8 +225,8 @@ class _TaskScreenState extends State<TaskScreen> {
                     subtitle: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('Date and Time: ${task.dateTime}'),
-                        Text('Location: ${task.location}'),
+                        Text('Data e Hora: ${task.dateTime}'),
+                        Text('Local: ${task.location}'),
                       ],
                     ),
                     trailing: Row(
