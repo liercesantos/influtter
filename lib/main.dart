@@ -1,14 +1,26 @@
 import 'package:flutter/material.dart';
+import 'package:influtter/models/task.dart';
 import 'package:influtter/task_manager/task_creator.dart';
 import 'package:influtter/task_manager/task_list.dart';
 import 'package:influtter/task_manager/task_screen.dart';
 
 void main() {
-  runApp(const TaskApp());
+  runApp(TaskApp());
 }
 
+// ignore: must_be_immutable
 class TaskApp extends StatelessWidget {
-  const TaskApp({Key? key}) : super(key: key);
+  List<Task> mainTasks = [];
+
+  TaskApp({Key? key}) : super(key: key);
+
+  void _addTask(String newTask, String newDateTime, String newLocation) {
+    String task = newTask;
+    String datetime = newDateTime;
+    String location = newLocation;
+
+    mainTasks.add(Task(name: task, dateTime: datetime, location: location));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,17 +44,25 @@ class TaskApp extends StatelessWidget {
 
   Widget _buildBody(Orientation orientation) {
     if (orientation == Orientation.portrait) {
-      return TaskScreen(key: Key('taskScreen'));
+      return TaskScreen(
+        key: Key('taskScreen'),
+        onAddTask: _addTask,
+        tasks: mainTasks,
+      );
     } else {
       return Row(
         children: <Widget>[
           Expanded(
             flex: 1,
-            child: TaskCreationScreen(key: Key('taskCreationScreen')),
+            child: TaskCreationScreen(
+                key: const Key('taskCreationScreen'), onAddTask: _addTask),
           ),
           Expanded(
             flex: 1,
-            child: TaskListScreen(key: Key('taskListScreen')),
+            child: TaskListScreen(
+              key: const Key('taskListScreen'),
+              tasks: mainTasks,
+            ),
           ),
         ],
       );

@@ -6,7 +6,11 @@ import 'package:geocoding/geocoding.dart';
 import '../models/task.dart';
 
 class TaskScreen extends StatefulWidget {
-  const TaskScreen({Key? key}) : super(key: key);
+  final Function(String, String, String) onAddTask;
+  final List<Task> tasks;
+
+  TaskScreen({Key? key, required this.onAddTask, required this.tasks})
+      : super(key: key);
 
   @override
   _TaskScreenState createState() => _TaskScreenState();
@@ -17,15 +21,14 @@ class _TaskScreenState extends State<TaskScreen> {
   TextEditingController _dateTimeController = TextEditingController();
   TextEditingController _locationController = TextEditingController();
 
-  List<Task> _tasks = [];
   int _editingIndex = -1;
 
   void _addTask() {
-    String name = _nameController.text;
-    String dateTime = _dateTimeController.text;
-    String location = _locationController.text;
+    String newTask = _nameController.text;
+    String newDateTime = _dateTimeController.text;
+    String newLocation = _locationController.text;
 
-    if (name.isEmpty || dateTime.isEmpty || location.isEmpty) {
+    if (newTask.isEmpty || newDateTime.isEmpty || newLocation.isEmpty) {
       showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -46,32 +49,11 @@ class _TaskScreenState extends State<TaskScreen> {
       return;
     }
 
-    setState(() {
-      if (_editingIndex != -1) {
-        _tasks[_editingIndex] = Task(
-          name: name,
-          dateTime: dateTime,
-          location: location,
-        );
-        _editingIndex = -1;
-      } else {
-        _tasks.add(
-          Task(
-            name: name,
-            dateTime: dateTime,
-            location: location,
-          ),
-        );
-      }
-
-      _nameController.clear();
-      _dateTimeController.clear();
-      _locationController.clear();
-    });
+    widget.onAddTask(newTask, newDateTime, newLocation);
   }
 
   void _editTask(int index) {
-    Task task = _tasks[index];
+    Task task = widget.tasks[index];
     _nameController.text = task.name;
     _dateTimeController.text = task.dateTime;
     _locationController.text = task.location;
@@ -104,7 +86,7 @@ class _TaskScreenState extends State<TaskScreen> {
 
   void _deleteTask(int index) {
     setState(() {
-      _tasks.removeAt(index);
+      widget.tasks.removeAt(index);
       if (_editingIndex == index) {
         _editingIndex = -1;
       }
@@ -159,7 +141,6 @@ class _TaskScreenState extends State<TaskScreen> {
       );
 
       if (placemarks.isNotEmpty) {
-        print(placemarks);
         _location =
             '${placemarks[0].subAdministrativeArea}, ${placemarks[0].administrativeArea}';
       }
@@ -217,9 +198,9 @@ class _TaskScreenState extends State<TaskScreen> {
             ),
             Expanded(
               child: ListView.builder(
-                itemCount: _tasks.length,
+                itemCount: widget.tasks.length,
                 itemBuilder: (context, index) {
-                  Task task = _tasks[index];
+                  Task task = widget.tasks[index];
                   return ListTile(
                     title: Text(task.name),
                     subtitle: Column(
