@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:geocoding/geocoding.dart';
 
 import '../models/task.dart';
 
@@ -99,100 +99,110 @@ class _TaskScreenState extends State<TaskScreen> {
     }
   }
 
-  Future<void> _getCurrentLocation() async {
+  Future<Position?> _getCurrentLocation() async {
     Position position;
+    String _location = 'N/E';
 
     try {
-      position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high,
+      LocationPermission permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        return null;
+      }
+
+      position = await Geolocator.getCurrentPosition();
+
+      List<Placemark> placemarks = await placemarkFromCoordinates(
+        position.latitude,
+        position.longitude,
       );
+
+      if (placemarks.isNotEmpty) {
+        print(placemarks);
+        _location =
+            '${placemarks[0].subAdministrativeArea}, ${placemarks[0].administrativeArea}';
+      }
     } catch (e) {
-      print('Error: $e');
-      return;
+      print('Erro ao obter a localização: $e');
+      return null;
     }
 
-    final List<Placemark> placemarks = await GeocodingPlatform.instance
-        .placemarkFromCoordinates(position.latitude, position.longitude);
+    _locationController.text = _location;
 
-    final Placemark placemark = placemarks.first;
-    final String address =
-        '${placemark.thoroughfare}, ${placemark.subLocality}, ${placemark.locality}, ${placemark.administrativeArea}, ${placemark.country}';
-
-    setState(() {
-      _locationController.text = address;
-    });
+    return position;
   }
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      key: widget.key,
-      children: <Widget>[
-        TextField(
-          controller: _nameController,
-          decoration: InputDecoration(
-            labelText: 'Task',
-          ),
-        ),
-        SizedBox(height: 16.0),
-        TextField(
-          controller: _dateTimeController,
-          onTap: () {
-            _selectDateTime(context);
-          },
-          readOnly: true,
-          decoration: InputDecoration(
-            labelText: 'Date and Time',
-          ),
-        ),
-        SizedBox(height: 16.0),
-        TextField(
-          controller: _locationController,
-          decoration: InputDecoration(
-            labelText: 'Location',
-          ),
-        ),
-        SizedBox(height: 16.0),
-        ElevatedButton(
-          child: Text(_editingIndex != -1 ? 'Update Task' : 'Add Task'),
-          onPressed: _addTask,
-        ),
-        ElevatedButton(
-          child: Text('Get Current Location'),
-          onPressed: _getCurrentLocation,
-        ),
-        Expanded(
-          child: ListView.builder(
-            itemCount: _tasks.length,
-            itemBuilder: (context, index) {
-              Task task = _tasks[index];
-              return ListTile(
-                title: Text(task.name),
-                subtitle: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text('Date and Time: ${task.dateTime}'),
-                    Text('Location: ${task.location}'),
-                  ],
-                ),
-                trailing: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    IconButton(
-                      icon: Icon(Icons.edit),
-                      onPressed: () => _editTask(index),
+    return Padding(
+        padding: EdgeInsets.symmetric(horizontal: 16.0),
+        child: Column(
+          key: widget.key,
+          children: <Widget>[
+            TextField(
+              controller: _nameController,
+              decoration: InputDecoration(
+                labelText: 'Task',
+              ),
+            ),
+            SizedBox(height: 16.0),
+            TextField(
+              controller: _dateTimeController,
+              onTap: () {
+                _selectDateTime(context);
+              },
+              readOnly: true,
+              decoration: InputDecoration(
+                labelText: 'Date and Time',
+              ),
+            ),
+            SizedBox(height: 16.0),
+            TextField(
+              controller: _locationController,
+              decoration: InputDecoration(
+                labelText: 'Location',
+              ),
+            ),
+            SizedBox(height: 16.0),
+            ElevatedButton(
+              child: Text(_editingIndex != -1 ? 'Update Task' : 'Add Task'),
+              onPressed: _addTask,
+            ),
+            ElevatedButton(
+              child: Text('Get Current Location'),
+              onPressed: _getCurrentLocation,
+            ),
+            Expanded(
+              child: ListView.builder(
+                itemCount: _tasks.length,
+                itemBuilder: (context, index) {
+                  Task task = _tasks[index];
+                  return ListTile(
+                    title: Text(task.name),
+                    subtitle: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('Date and Time: ${task.dateTime}'),
+                        Text('Location: ${task.location}'),
+                      ],
                     ),
-                    IconButton(
-                      icon: Icon(Icons.delete),
-                      onPressed: () => _deleteTask(index),
+                    trailing: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        IconButton(
+                          icon: Icon(Icons.edit),
+                          onPressed: () => _editTask(index),
+                        ),
+                        IconButton(
+                          icon: Icon(Icons.delete),
+                          onPressed: () => _deleteTask(index),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
-              );
-            },
-          ),
-        ),
-      ],
-    );
+                  );
+                },
+              ),
+            ),
+          ],
+        ));
   }
 }

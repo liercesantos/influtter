@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 
 import '../models/task.dart';
@@ -44,26 +43,23 @@ class TaskCreationScreen extends StatelessWidget {
       }
     }
 
-    Future<void> _getCurrentLocation() async {
+    Future<Position?> _getCurrentLocation() async {
       Position position;
-
       try {
-        position = await Geolocator.getCurrentPosition(
-          desiredAccuracy: LocationAccuracy.high,
-        );
+        LocationPermission permission = await Geolocator.requestPermission();
+        if (permission == LocationPermission.denied) {
+          return null;
+        }
+
+        position = await Geolocator.getCurrentPosition();
       } catch (e) {
-        print('Error: $e');
-        return;
+        print('Erro ao obter a localização: $e');
+        return null;
       }
 
-      final List<Placemark> placemarks = await GeocodingPlatform.instance
-          .placemarkFromCoordinates(position.latitude, position.longitude);
+      _locationController.text = '${position.latitude}, ${position.longitude}';
 
-      final Placemark placemark = placemarks.first;
-      final String address =
-          '${placemark.thoroughfare}, ${placemark.subLocality}, ${placemark.locality}, ${placemark.administrativeArea}, ${placemark.country}';
-
-      _locationController.text = address;
+      return position;
     }
 
     void _addTask() {
