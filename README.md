@@ -1,16 +1,21 @@
-# influtter
+# InFlutter
 
-A new Flutter project.
+Projeto final da disciplina Desenvolvimento Mobile com Flutter [23E2_2] do Instituto Infnet. 
 
-## Getting Started
+## Apresentação do projeto
 
-This project is a starting point for a Flutter application.
+O projeto consiste em um gerenciador de tarefas simples que disponibiliza um seletor de data, hora e um botão para buscar a localização atual do usuário. Ao clicar em adicionar tarefa, os dados são apresentados em uma lista onde podem ser editados ou removidos.
 
-A few resources to get you started if this is your first Flutter project:
+## Prints do Aplicativo
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+![Captura de tela](./lib/prtscr/prtscr.01.jpeg)
+![Captura de tela](./lib/prtscr/prtscr.02.jpeg)
+![Captura de tela](./lib/prtscr/prtscr.03.jpeg)
+![Captura de tela](./lib/prtscr/prtscr.04.jpeg)
+![Captura de tela](./lib/prtscr/prtscr.05.jpeg)
+![Captura de tela](./lib/prtscr/prtscr.06.jpeg)
+![Captura de tela](./lib/prtscr/prtscr.07.jpeg)
+![Captura de tela](./lib/prtscr/prtscr.08.jpeg)
+![Captura de tela](./lib/prtscr/prtscr.09.jpeg)
+![Captura de tela](./lib/prtscr/prtscr.10.jpeg)
+![Captura de tela](./lib/prtscr/prtscr.11.jpeg)

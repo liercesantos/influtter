@@ -36,7 +36,7 @@ class _TaskAppState extends State<TaskApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Task App',
+      title: 'InFlutter',
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
@@ -44,7 +44,7 @@ class _TaskAppState extends State<TaskApp> {
         builder: (context, orientation) {
           return Scaffold(
             appBar: AppBar(
-              title: Text('Task List'),
+              title: Text('Lista de Tarefas'),
             ),
             body: _buildBody(orientation),
           );
