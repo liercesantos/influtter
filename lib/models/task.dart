@@ -8,4 +8,9 @@ class Task {
     required this.dateTime,
     required this.location,
   });
+
+  Task.initial()
+      : name = '',
+        dateTime = '',
+        location = '';
 }
