@@ -1,0 +1,8 @@
+name: mylocation
+description: Um pacote local personalizado para buscar a posição atual em Flutter.
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.0.2 <4.0.0'
+dependencies:
+  geolocator: ^9.0.2
